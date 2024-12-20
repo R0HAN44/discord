@@ -1,5 +1,14 @@
+import UserAvatar from "@/components/UserAvatar";
+
 const Home = () => {
-  return <div>Home</div>;
+  return (
+    <div>
+      home
+      <div>
+        <UserAvatar />
+      </div>
+    </div>
+  );
 };
 
 export default Home;

@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const axiosInstance = axios.create({
@@ -14,7 +15,14 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      try {
+        const parsedToken = JSON.parse(token);
+        if (parsedToken) {
+          config.headers.Authorization = `Bearer ${parsedToken}`;
+        }
+      } catch (error) {
+        console.error("Failed to parse authToken:", error);
+      }
     }
     return config;
   },
@@ -25,11 +33,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Redirect to login on unauthorized access
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
+    Promise.reject(error)
   }
 );
 

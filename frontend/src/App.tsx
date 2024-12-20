@@ -7,36 +7,44 @@ import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import ProtectedLayout from "./pages/ProtectedLayout";
 import NotFound from "./pages/NotFound";
+import { Toaster } from "@/components/ui/toaster";
+import SetupPage from "./pages/SetupPage";
+import CreateServerPage from "./pages/CreateServerPage";
+import ServerPage from "./pages/ServerPage";
 
 function App() {
   return (
-    <Router>
-      <div>
-        <Routes>
-          <Route
-            path="/login"
-            element={
-              <AuthLayout>
-                <Login />
-              </AuthLayout>
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <AuthLayout>
-                <SignUp />
-              </AuthLayout>
-            }
-          />
-          <Route element={<ProtectedLayout />}>
-            <Route path="*" element={<Home />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-          </Route>
-        </Routes>
-      </div>
-    </Router>
+    <>
+      <Toaster />
+      <Router>
+        <div>
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <AuthLayout>
+                  <Login />
+                </AuthLayout>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <AuthLayout>
+                  <SignUp />
+                </AuthLayout>
+              }
+            />
+            <Route path="/servers/:serverId" element={<ServerPage />} />
+            <Route element={<ProtectedLayout />}>
+              <Route path="*" element={<CreateServerPage />} />
+              <Route path="/" element={<CreateServerPage />} />
+              <Route path="/about" element={<About />} />
+            </Route>
+          </Routes>
+        </div>
+      </Router>
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect } from "react";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 // import { useAuth } from "../context/AuthContext";
 
 interface ProtectedLayoutProps {
@@ -7,15 +7,20 @@ interface ProtectedLayoutProps {
 }
 
 const ProtectedLayout: React.FC<ProtectedLayoutProps> = () => {
-  const isAuthenticated = false;
   const navigate = useNavigate();
   useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-    console.log(document.cookie, "cookie");
-    if (!token) {
+    const data = localStorage.getItem("authToken");
+    if (data) {
+      try {
+        const tokenData = JSON.parse(data);
+        if (!tokenData) {
+          navigate("/login");
+          return;
+        }
+      } catch (error) {
+        console.error("Error parsing token data:", error);
+      }
+    } else {
       navigate("/login");
     }
   }, [navigate]);

@@ -16,8 +16,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { login } from "@/api/apiController";
+import { useEffect } from "react";
+import { toast } from "@/hooks/use-toast";
+import useAppStore from "@/useAppStore";
 
 // Login form type
 type LoginFormValues = {
@@ -26,16 +29,42 @@ type LoginFormValues = {
 };
 
 const Login = () => {
+  const { setUser } = useAppStore();
+  const navigate = useNavigate();
   const form = useForm<LoginFormValues>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
+  const { user } = useAppStore();
+  const token = localStorage.getItem("authToken");
+  console.log(token, user);
+
+  useEffect(() => {
+    if (user?.id && token) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate, token]);
 
   const onSubmit = async (data: LoginFormValues) => {
-    const response = await login(data);
-    console.log(response);
+    try {
+      const response = await login(data);
+      const token = response.token;
+      localStorage.setItem("authToken", JSON.stringify(token));
+      setUser(response?.user);
+      toast({
+        variant: "success",
+        title: response.message,
+      });
+    } catch (error: any) {
+      console.log(error?.response?.data?.message || "Something went wrong");
+      const errMsg = error?.response?.data?.message || "Something went wrong";
+      toast({
+        variant: "destructive",
+        title: errMsg,
+      });
+    }
   };
 
   return (

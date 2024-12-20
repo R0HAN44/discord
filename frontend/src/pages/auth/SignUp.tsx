@@ -17,34 +17,69 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Link, useNavigate } from "react-router-dom";
-import { singup } from "@/api/apiController";
+import { signup } from "@/api/apiController";
 import { useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import useAppStore from "@/useAppStore";
 
 // Sign up form type
 type SignUpFormValues = {
   email: string;
-  username: string;
+  name: string;
   password: string;
   confirmPassword: string;
 };
 
 const SignUp = () => {
+  const { user, setUser } = useAppStore();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const form = useForm<SignUpFormValues>({
     defaultValues: {
       email: "",
-      username: "",
+      name: "",
       password: "",
       confirmPassword: "",
     },
   });
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token && user?.id) {
+      if (window.location.pathname !== "/") {
+        navigate("/");
+      }
+      return;
+    }
+  }, [navigate]);
 
   const onSubmit = async (data: SignUpFormValues) => {
-    const response = await singup(data);
-    if (response.success) {
-      navigate("/");
+    try {
+      const response = await signup(data);
+      console.log(response);
+      const token = response.token;
+      const expiryInMinutes = 1400;
+      const expiryTime = new Date().getTime() + expiryInMinutes * 60 * 1000;
+      const tokenData = {
+        value: token,
+        expiry: expiryTime,
+      };
+      localStorage.setItem("authToken", JSON.stringify(tokenData));
+      setUser(response?.user);
+      if (response.success) {
+        toast({
+          variant: "default",
+          title: response.message,
+        });
+        navigate("/");
+      }
+    } catch (error: any) {
+      console.log(error?.response?.data?.message || "Something went wrong");
+      const errMsg = error?.response?.data?.message || "Something went wrong";
+      toast({
+        variant: "destructive",
+        title: errMsg,
+      });
     }
-    console.log(response);
   };
 
   return (
@@ -89,18 +124,18 @@ const SignUp = () => {
               />
               <FormField
                 control={form.control}
-                name="username"
+                name="name"
                 rules={{
-                  required: "Username is required",
+                  required: "Name is required",
                   minLength: {
                     value: 3,
-                    message: "Username must be at least 3 characters",
+                    message: "Name must be at least 3 characters",
                   },
                 }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm font-medium text-gray-200">
-                      USERNAME
+                      NAME
                     </FormLabel>
                     <FormControl>
                       <Input

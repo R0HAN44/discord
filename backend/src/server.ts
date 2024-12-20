@@ -1,8 +1,8 @@
 import express, { Request, Response, Router } from 'express';
 import dotenv from "dotenv";
 import cors from "cors";
-import { userRouter } from './routes/userRoute';
-import cookieParser from "cookie-parser";
+import { authRouter } from './routes/authRoute';
+import { serverRouter } from './routes/serverRoute';
 
 
 dotenv.config();
@@ -11,21 +11,21 @@ const app = express();
 const PORT = 8000;
 
 app.use(express.json())
-app.use(cookieParser());
 
 app.use(
   cors({
     origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Added OPTIONS
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'], // Added Cookie
     credentials: true,
-    exposedHeaders: ['set-cookie'] // Allow the browser to expose the set-cookie header
+    exposedHeaders: ['set-cookie']
   })
 );
 
 
 const router = Router()
-app.use("/api",userRouter);
+app.use("/api/auth",authRouter);
+app.use("/api/server",serverRouter);
 
 router.get("/",(req:Request,res:Response) => {
   res.json({
