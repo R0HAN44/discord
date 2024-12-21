@@ -21,6 +21,7 @@ import { login } from "@/api/apiController";
 import { useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import useAppStore from "@/useAppStore";
+import fetchUserServers from "@/api/fetchUserServers";
 
 // Login form type
 type LoginFormValues = {
@@ -39,7 +40,6 @@ const Login = () => {
   });
   const { user } = useAppStore();
   const token = localStorage.getItem("authToken");
-  console.log(token, user);
 
   useEffect(() => {
     if (user?.id && token) {
@@ -53,6 +53,7 @@ const Login = () => {
       const token = response.token;
       localStorage.setItem("authToken", JSON.stringify(token));
       setUser(response?.user);
+      await fetchUserServers(response?.user?.id || "");
       toast({
         variant: "success",
         title: response.message,

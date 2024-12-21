@@ -55,7 +55,13 @@ const SignUp = () => {
   const onSubmit = async (data: SignUpFormValues) => {
     try {
       const response = await signup(data);
-      console.log(response);
+      if (!response.success) {
+        toast({
+          variant: "destructive",
+          title: response.message,
+        });
+        return;
+      }
       const token = response.token;
       const expiryInMinutes = 1400;
       const expiryTime = new Date().getTime() + expiryInMinutes * 60 * 1000;
@@ -73,8 +79,7 @@ const SignUp = () => {
         navigate("/");
       }
     } catch (error: any) {
-      console.log(error?.response?.data?.message || "Something went wrong");
-      const errMsg = error?.response?.data?.message || "Something went wrong";
+      const errMsg = error || "Something went wrong";
       toast({
         variant: "destructive",
         title: errMsg,

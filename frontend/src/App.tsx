@@ -10,7 +10,8 @@ import NotFound from "./pages/NotFound";
 import { Toaster } from "@/components/ui/toaster";
 import SetupPage from "./pages/SetupPage";
 import CreateServerPage from "./pages/CreateServerPage";
-import ServerPage from "./pages/ServerPage";
+import ServerPage from "./pages/main/ServerPage";
+import MainLayout from "./pages/main/MainLayout";
 
 function App() {
   return (
@@ -35,7 +36,14 @@ function App() {
                 </AuthLayout>
               }
             />
-            <Route path="/servers/:serverId" element={<ServerPage />} />
+            <Route
+              path="/servers/:serverid"
+              element={
+                <MainLayout>
+                  <ServerPage />
+                </MainLayout>
+              }
+            />
             <Route element={<ProtectedLayout />}>
               <Route path="*" element={<CreateServerPage />} />
               <Route path="/" element={<CreateServerPage />} />

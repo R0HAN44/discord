@@ -9,7 +9,7 @@ import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useAppStore from "@/useAppStore";
 
-const UserAvatar = () => {
+const UserAvatar = ({ name }: { name: string }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const { setUser, setServers } = useAppStore();
 
@@ -27,9 +27,9 @@ const UserAvatar = () => {
       {/* Avatar and Logout Dropdown */}
       <Popover>
         <PopoverTrigger>
-          <Avatar>
-            <AvatarImage src="/path/to/your/image.jpg" alt="User Avatar" />
-            <AvatarFallback>U</AvatarFallback>
+          <Avatar className="h-[48px] w-[48px] rounded-full border-2 border-green-500/50">
+            <AvatarImage src="/path/to/your/image.jpg" alt={name} />
+            <AvatarFallback>{name[0].toUpperCase() || "D"}</AvatarFallback>
           </Avatar>
         </PopoverTrigger>
         <PopoverContent

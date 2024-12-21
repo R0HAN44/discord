@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { authRouter } from './routes/authRoute';
 import { serverRouter } from './routes/serverRoute';
+import { userRouter } from './routes/userRoute';
 
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(
 const router = Router()
 app.use("/api/auth",authRouter);
 app.use("/api/server",serverRouter);
+app.use("/api/user",userRouter);
 
 router.get("/",(req:Request,res:Response) => {
   res.json({

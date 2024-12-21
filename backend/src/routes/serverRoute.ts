@@ -57,6 +57,49 @@ serverRouter.get('/',authenticateToken, async (req: Request, res: Response): Pro
   }
 });
 
+// Get all servers where a member matches the given userid
+serverRouter.get('/userservers',authenticateToken, async (req: Request, res: Response): Promise<any> => {
+  try {
+    // Get userid from query params
+    const { userid } = req.query;
+
+    if (!userid) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required'
+      });
+    }
+
+    const servers = await db.server.findMany({
+      where: {
+        members: {
+          some: {
+            profileId: userid as string
+          }
+        }
+      }
+    });
+
+    if (!servers) {
+      return res.json({
+      success: true,
+      servers: []
+    });
+    }
+
+    return res.json({
+      success: true,
+      servers
+    });
+  } catch (error) {
+    console.error('Error fetching server:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while fetching the server'
+    });
+  }
+});
+
 serverRouter.post('/createserver',authenticateToken, async (req: Request, res: Response):Promise<any> => {
   try {
     const { servername,userid } = req.body;
@@ -105,6 +148,60 @@ serverRouter.post('/createserver',authenticateToken, async (req: Request, res: R
     return res.status(500).json({
       success: false,
       message: 'An error occurred while posting the server'
+    });
+  }
+});
+
+
+serverRouter.get('/serverwithcm',authenticateToken, async (req: Request, res: Response): Promise<any> => {
+  try {
+    // Get userid from query params
+    const { serverid } = req.query;
+
+    if (!serverid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Server ID is required'
+      });
+    }
+
+    const server = await db.server.findUnique({
+      where: {
+        id:String(serverid),
+      },
+      include:{
+        channels:{
+          orderBy:{
+            createdAt:"asc"
+          }
+        },
+        members:{
+          include:{
+            profile: true
+          },
+          orderBy:{
+            role:"asc"
+          }
+        }
+      }
+    });
+
+    if (!server) {
+      return res.json({
+      success: true,
+      server: null
+    });
+    }
+
+    return res.json({
+      success: true,
+      server
+    });
+  } catch (error) {
+    console.error('Error fetching server:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while fetching the server'
     });
   }
 });

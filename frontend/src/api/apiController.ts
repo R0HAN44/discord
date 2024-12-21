@@ -1,14 +1,5 @@
 import axiosInstance from "./axiosConfig";
 
-export const getUsers = async () => {
-  try {
-    const response = await axiosInstance.get("/api/users");
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const login = async (userData: object) => {
   try {
     const response = await axiosInstance.post("/api/auth/login", userData);
@@ -41,6 +32,33 @@ export const getUserServer = async (id : string) => {
 export const createServer = async (servername: string,userid : string | undefined) => {
   try {
     const response = await axiosInstance.post(`/api/server/createserver`,{servername,userid});
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserServers = async (id : string) => {
+  try {
+    const response = await axiosInstance.get(`/api/server/userservers?userid=${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getServerChannelAndMembers = async (id : string) => {
+  try {
+    const response = await axiosInstance.get(`/api/server/serverwithcm?serverid=${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserDetails = async () => {
+  try {
+    const response = await axiosInstance.get("/api/user");
     return response.data;
   } catch (error) {
     throw error;
