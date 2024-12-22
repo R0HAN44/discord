@@ -16,7 +16,12 @@ const NavigationItem = ({ id, imageUrl, name }: NavigationItemProps) => {
   const { servers, setActiveServer } = useAppStore();
   const onClick = () => {
     const activeserver = servers.find((server) => server.id === id);
-    setActiveServer(activeserver || null);
+    if (!activeserver) {
+      console.error("Server not found");
+      return;
+    }
+    console.log(activeserver);
+    setActiveServer(activeserver);
     navigate(`/servers/${id}`);
   };
   return (

@@ -6,6 +6,10 @@ import { MemberRole } from '@prisma/client';
 
 export const serverRouter = Router();
 
+export interface ExtendedRequest extends Request {
+  user?: any
+}
+
 
 // Get the first server where a member matches the given userid
 serverRouter.get('/',authenticateToken, async (req: Request, res: Response): Promise<any> => {
@@ -71,14 +75,30 @@ serverRouter.get('/userservers',authenticateToken, async (req: Request, res: Res
     }
 
     const servers = await db.server.findMany({
-      where: {
-        members: {
-          some: {
-            profileId: userid as string
+        where: {
+          members: {
+            some: {
+              profileId: userid as string
+            }
+          }
+        },
+        include: {
+          channels: {
+            orderBy: {
+              createdAt: "asc"
+            }
+          },
+          members: {
+            include: {
+              profile: true 
+            },
+            orderBy: {
+              role: "asc" 
+            }
           }
         }
-      }
-    });
+      });
+
 
     if (!servers) {
       return res.json({
@@ -138,9 +158,30 @@ serverRouter.post('/createserver',authenticateToken, async (req: Request, res: R
         }
       });
 
+      const createdServer = await db.server.findUnique({
+          where: {
+            id: server.id, // Use the ID from the created server
+          },
+          include: {
+            channels: {
+              orderBy: {
+                createdAt: "asc"
+              }
+            },
+            members: {
+              include: {
+                profile: true // Include profile details
+              },
+              orderBy: {
+                role: "asc"
+              }
+            }
+          }
+        });
+
       res.json({
         success: true,
-        server
+        server : createdServer
       });
       return;
   } catch (error) {
@@ -202,6 +243,48 @@ serverRouter.get('/serverwithcm',authenticateToken, async (req: Request, res: Re
     return res.status(500).json({
       success: false,
       message: 'An error occurred while fetching the server'
+    });
+  }
+});
+
+serverRouter.patch('/generatecode',authenticateToken, async (req: ExtendedRequest, res: Response):Promise<any> => {
+  try {
+    const { serverid } = req.query;
+    if (!req.user) {
+        return res.status(400).json({
+          success: false,
+          message: 'User Not found'
+        });
+      }
+    const user = req.user;
+
+      if (!serverid) {
+        return res.status(400).json({
+          success: false,
+          message: 'Server ID is required'
+        });
+      }
+  
+      const server = await db.server.update({
+        where:{
+          id: serverid as string,
+          profileId : user.id,
+        },
+        data:{
+          inviteCode : uuidv4()
+        }
+      })
+
+      res.json({
+        success: true,
+        server
+      });
+      return;
+  } catch (error) {
+    console.error('Error server:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while patching invite code to the server'
     });
   }
 });

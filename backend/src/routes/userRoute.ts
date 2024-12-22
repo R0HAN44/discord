@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import jwt from 'jsonwebtoken';
 import { db } from '../lib/db';
+import authenticateToken from '../middlewares/authenticateToken';
 
 const JWT_SECRET = process.env.JWT_SECRET || "rohan";
 
@@ -49,6 +50,79 @@ userRouter.get('/', async (req: Request, res: Response):Promise<any> => {
         imageUrl: user.imageUrl
       }
     });
+
+  } catch (error) {
+    console.error('Get current user error:', error);
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid token'
+    });
+  }
+});
+
+userRouter.get('/checkexists',authenticateToken, async (req: Request, res: Response):Promise<any> => {
+  try { 
+    const userid = req.query.userid as string;
+    const invitecode = req.query.invitecode as string;
+
+    if(!userid || !invitecode){
+      return res.status(401).json({
+        success:false,
+        message:"No invite code or userid provided"
+      })
+    }
+
+    const existingServer = await db.server.findFirst({
+      where:{
+        inviteCode: invitecode,
+        members:{
+          some:{
+            profileId: userid
+          }
+        }
+      }
+    })
+
+    if(existingServer){
+      return res.status(200).json({
+        success:true,
+        alreadyExisting : true,
+        serverFound : true,
+        serverid:existingServer.id,
+        message:"User already exists"
+      })
+    }
+
+    const server = await db.server.update({
+      where:{
+        inviteCode: invitecode,
+        },
+      data:{
+        members:{
+          create:[{
+            profileId: userid
+          }]
+        }
+      }
+    })
+
+    if(server){
+      return res.status(200).json({
+        success:true,
+        alreadyExisting : false,
+        serverFound : true,
+        serverid:server.id,
+        message:"server found"
+      })
+    }else{
+      return res.status(200).json({
+        success:true,
+        serverFound : false,
+        message:"server not found"
+      })
+    }
+
+    
 
   } catch (error) {
     console.error('Get current user error:', error);

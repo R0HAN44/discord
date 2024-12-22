@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-export type ModalType = "createServer"
+export type ModalType = "createServer" | "invite";
 
 interface ModalStore {
   type : ModalType | null;
   isOpen: boolean;
-  onOpen: (type:ModalType, dialogTriggerButton:boolean) => void;
+  data: any;
+  onOpen: (type:ModalType, dialogTriggerButton:boolean, data?: any) => void;
   onClose: ()=>void;
   dialogTriggerButton: boolean;
   setDialogTriggerButton: (dialogTriggerButton : boolean) => void;
@@ -26,6 +27,11 @@ interface AppState {
     name: string;
     imageUrl?: string;
     inviteCode: string;
+    createdAt?: Date,
+    updatedAt?: Date,
+    profileId:string;
+    channels: any[];
+    members: any[];
   }[];
   activeServer: {
     id: string;
@@ -34,18 +40,18 @@ interface AppState {
     inviteCode: string;
     createdAt?: Date,
     updatedAt?: Date,
-    profileId?:string;
-    channels?: any[];
-    members?: any[];
-  } | null;
+    profileId:string;
+    channels: any[];
+    members: any[];
+  };
   activeChannel: {
     id: string;
     name: string;
     type: "TEXT" | "AUDIO" | "VIDEO";
   } | null;
   setUser: (user: { id: string; name: string; email: string; imageUrl?: string } | null) => void;
-  setServers: (servers: { id: string; name: string; imageUrl?: string; inviteCode: string }[]) => void;
-  setActiveServer: (server: { id: string; name: string; imageUrl?: string; inviteCode: string;createdAt?: Date; updatedAt?: Date,profileId?:string,channels?: any[],members?: any[],} | null) => void;
+  setServers: (servers: { id: string; name: string; imageUrl?: string; inviteCode: string,createdAt?: Date; updatedAt?: Date,profileId:string,channels: any[],members: any[], }[]) => void;
+  setActiveServer: (server: { id: string; name: string; imageUrl?: string; inviteCode: string;createdAt?: Date; updatedAt?: Date,profileId:string,channels: any[],members: any[],}) => void;
   setActiveChannel: (channel: { id: string; name: string; type: "TEXT" | "AUDIO" | "VIDEO" } | null) => void;
 }
 
@@ -66,7 +72,8 @@ const useAppStore = create<AppState>()(
 export const useModal = create<ModalStore>((set)=>({
   type:null,
   isOpen : false,
-  onOpen : (type, dialogTriggerButton) => set({isOpen:true,dialogTriggerButton,type}),
+  data : {},
+  onOpen : (type, dialogTriggerButton, data = {}) => set({isOpen:true,dialogTriggerButton,type, data}),
   onClose: () => set({type:null, isOpen:false}),
   dialogTriggerButton : false,
   setDialogTriggerButton: (dialogTriggerButton : boolean) => set({ dialogTriggerButton }),

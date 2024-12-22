@@ -64,3 +64,21 @@ export const getUserDetails = async () => {
     throw error;
   }
 };
+
+export const generateInviteCode = async (serverid : string) => {
+  try {
+    const response = await axiosInstance.patch(`/api/server/generatecode?serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const checkUserExixtsInServerAndUpdate = async (userid : string, invitecode : string) => {
+  try {
+    const response = await axiosInstance.get(`/api/user/checkexists?userid=${userid}&invitecode=${invitecode}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -12,6 +12,7 @@ import SetupPage from "./pages/SetupPage";
 import CreateServerPage from "./pages/CreateServerPage";
 import ServerPage from "./pages/main/ServerPage";
 import MainLayout from "./pages/main/MainLayout";
+import InviteCode from "./pages/InviteCode";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
                 </MainLayout>
               }
             />
+            <Route path="/invite/:invitecode" element={<InviteCode />} />
             <Route element={<ProtectedLayout />}>
               <Route path="*" element={<CreateServerPage />} />
               <Route path="/" element={<CreateServerPage />} />

@@ -14,20 +14,25 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
-    if (token) {
-      try {
-        const parsedToken = JSON.parse(token);
-        if (parsedToken) {
-          config.headers.Authorization = `Bearer ${parsedToken}`;
+    const excludedPaths = ["/login", "/signup"]; // Add paths you want to exclude
+
+    if (!excludedPaths.some(path => config.url?.includes(path))) {
+      if (token) {
+        try {
+          const parsedToken = JSON.parse(token);
+          if (parsedToken) {
+            config.headers.Authorization = `Bearer ${parsedToken}`;
+          }
+        } catch (error) {
+          console.error("Failed to parse authToken:", error);
         }
-      } catch (error) {
-        console.error("Failed to parse authToken:", error);
       }
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
+
 
 // Add a response interceptor
 axiosInstance.interceptors.response.use(

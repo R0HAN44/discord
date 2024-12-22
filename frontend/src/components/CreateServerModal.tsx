@@ -24,6 +24,7 @@ export default function CreateServerModal() {
   const { setActiveServer } = useAppStore();
   const { isOpen, onClose, type, dialogTriggerButton } = useModal();
 
+  const isModalOpen = isOpen && type === "createServer";
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +33,11 @@ export default function CreateServerModal() {
       return;
     }
     const response = await createServer(serverName, user?.id);
+    console.log(response.server);
     setActiveServer(response.server);
     setServerName("");
     onClose();
-    navigate(`/servers/${response.id}`);
+    navigate(`/servers/${response.server.id}`);
     setError(false);
   };
 
@@ -45,7 +47,7 @@ export default function CreateServerModal() {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isModalOpen} onOpenChange={handleClose}>
       {dialogTriggerButton && (
         <DialogTrigger asChild>
           <Button variant="outline">

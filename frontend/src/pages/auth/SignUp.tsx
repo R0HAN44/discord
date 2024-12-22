@@ -63,17 +63,11 @@ const SignUp = () => {
         return;
       }
       const token = response.token;
-      const expiryInMinutes = 1400;
-      const expiryTime = new Date().getTime() + expiryInMinutes * 60 * 1000;
-      const tokenData = {
-        value: token,
-        expiry: expiryTime,
-      };
-      localStorage.setItem("authToken", JSON.stringify(tokenData));
+      localStorage.setItem("authToken", JSON.stringify(token));
       setUser(response?.user);
       if (response.success) {
         toast({
-          variant: "default",
+          variant: "success",
           title: response.message,
         });
         navigate("/");

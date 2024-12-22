@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "@/api/apiController";
+import { getUserDetails, login } from "@/api/apiController";
 import { useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import useAppStore from "@/useAppStore";
@@ -42,25 +42,35 @@ const Login = () => {
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
-    if (user?.id && token) {
-      navigate("/", { replace: true });
+    if (token) {
+      checkUserValid();
     }
-  }, [user, navigate, token]);
+  }, [navigate, token]);
+
+  async function checkUserValid() {
+    const userResponse = await getUserDetails();
+    if (userResponse.success) {
+      setUser(userResponse.user);
+      navigate("/");
+    }
+  }
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const response = await login(data);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
       const token = response.token;
       localStorage.setItem("authToken", JSON.stringify(token));
       setUser(response?.user);
-      await fetchUserServers(response?.user?.id || "");
       toast({
         variant: "success",
         title: response.message,
       });
+      // await fetchUserServers(response?.user?.id || "");
     } catch (error: any) {
-      console.log(error?.response?.data?.message || "Something went wrong");
-      const errMsg = error?.response?.data?.message || "Something went wrong";
+      const errMsg = error?.message || "Something went wrong 232 3";
       toast({
         variant: "destructive",
         title: errMsg,

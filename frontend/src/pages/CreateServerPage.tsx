@@ -8,13 +8,13 @@ import CreateServerModal from "@/components/CreateServerModal";
 
 const CreateServerPage = () => {
   const navigate = useNavigate();
-  const { user, setUser, setActiveServer } = useAppStore();
+  const { setUser, setActiveServer } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
-  const { setDialogTriggerButton } = useModal();
+  const { setDialogTriggerButton, onOpen } = useModal();
   const token = localStorage.getItem("authToken");
 
   useEffect(() => {
-    setDialogTriggerButton(true);
+    onOpen("createServer", true);
     if (!token) {
       navigate("/signup", { replace: true });
       return;
@@ -23,17 +23,36 @@ const CreateServerPage = () => {
   useEffect(() => {
     const checkUserServers = async () => {
       try {
-        const userResponse = await getUserDetails();
+        let userResponse;
+        try {
+          userResponse = await getUserDetails();
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+          navigate("/login");
+          return;
+        }
+
+        if (!userResponse?.success) {
+          console.log("Navigating to login");
+          navigate("/login");
+          return;
+        }
+
         setUser(userResponse.user);
+        console.log(userResponse);
+
         const response = await getUserServer(userResponse?.user?.id);
-        if (!response.success) {
+        console.log(response);
+        if (!response?.success) {
+          console.log("inside error");
           throw new Error("Failed to fetch servers");
         }
 
         const data = response.server;
-        setActiveServer(data);
-        navigate(`/servers/${data.id}`, { replace: true });
-        console.log("navigating");
+        if (data) {
+          setActiveServer(data);
+          navigate(`/servers/${data.id}`, { replace: true });
+        }
       } catch (error) {
         console.error("Error checking servers:", error);
       } finally {
