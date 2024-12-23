@@ -1,3 +1,4 @@
+import { MemberRole } from "@/lib/utils";
 import axiosInstance from "./axiosConfig";
 
 export const login = async (userData: object) => {
@@ -77,6 +78,33 @@ export const generateInviteCode = async (serverid : string) => {
 export const checkUserExixtsInServerAndUpdate = async (userid : string, invitecode : string) => {
   try {
     const response = await axiosInstance.get(`/api/user/checkexists?userid=${userid}&invitecode=${invitecode}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateServerDetails = async (servername:string, serverid : string) => {
+  try {
+    const response = await axiosInstance.patch(`/api/server/updateserver?servername=${servername}&serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateMemberRole = async (memberid:string, role : MemberRole, serverid : string) => {
+  try {
+    const response = await axiosInstance.patch(`/api/member/updatemember?memberid=${memberid}&role=${role}&serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteMember = async (memberid:string, serverid : string) => {
+  try {
+    const response = await axiosInstance.delete(`/api/member/deletemember?memberid=${memberid}&serverid=${serverid}`);
     return response.data;
   } catch (error) {
     throw error;

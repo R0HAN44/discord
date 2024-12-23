@@ -4,6 +4,9 @@ import { useModal } from "@/useAppStore";
 import React, { useEffect } from "react";
 import ServerLayout from "./ServerLayout";
 import InviteModal from "@/components/InviteModal";
+import EditServerModal from "@/components/EditServerModal";
+import MembersModal from "@/components/MembersModal";
+import CreateChannelModal from "@/components/CreateChannelModal";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { setDialogTriggerButton, onClose } = useModal();
@@ -16,6 +19,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <CreateServerModal />
       <InviteModal />
+      <EditServerModal />
+      <MembersModal />
+      <CreateChannelModal />
       <div className="h-full">
         <div className="hidden md:flex h-full w-[72px] z-30 flex-col fixed inset-y-0">
           <NavigationSideBar />

@@ -288,3 +288,68 @@ serverRouter.patch('/generatecode',authenticateToken, async (req: ExtendedReques
     });
   }
 });
+
+serverRouter.patch('/updateserver',authenticateToken, async (req: ExtendedRequest, res: Response):Promise<any> => {
+  const { servername, serverid } = req.query;
+    const user = req.user;
+
+    if (!servername || !serverid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required server details to update',
+      });
+    }
+
+    try {
+      await db.server.update({
+        where: {
+          id: serverid as string,
+          profileId : user.id,
+        },
+        data: {
+          name: servername as string,
+        },
+      });
+
+      
+      const server = await db.server.findUnique({
+        where: {
+          id: serverid as string,
+        },
+        include: {
+          channels: {
+            orderBy: {
+              createdAt: 'asc', 
+            },
+          },
+          members: {
+            include: {
+              profile: true, 
+            },
+            orderBy: {
+              role: 'asc', 
+            },
+          },
+        },
+      });
+
+      if (!server) {
+        return res.status(404).json({
+          success: false,
+          message: 'Server not found after update',
+        });
+      }
+
+      res.json({
+        success: true,
+        server,
+      });
+    } catch (error) {
+      console.error('Error updating server:', error);
+      res.status(500).json({
+        success: false,
+        message: 'An error occurred while updating the server',
+      });
+    }
+
+});
