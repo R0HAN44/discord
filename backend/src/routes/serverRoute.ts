@@ -31,7 +31,22 @@ serverRouter.get('/',authenticateToken, async (req: Request, res: Response): Pro
             profileId: userid as string
           }
         }
-      }
+      },
+      include: {
+        channels: {
+          orderBy: {
+            createdAt: "asc", // Order channels by creation date
+          },
+        },
+        members: {
+          include: {
+            profile: true, // Include profile details of members
+          },
+          orderBy: {
+            role: "asc", // Order members by role
+          },
+        },
+      },
     });
 
     if (!server) {
@@ -43,14 +58,7 @@ serverRouter.get('/',authenticateToken, async (req: Request, res: Response): Pro
 
     return res.json({
       success: true,
-      server: {
-        id: server.id,
-        name: server.name,
-        imageUrl:server.imageUrl,
-        inviteCode:server.inviteCode,
-        createdAt: server.createdAt,
-        updatedAt:server.updatedAt
-      }
+      server
     });
   } catch (error) {
     console.error('Error fetching server:', error);
