@@ -353,3 +353,120 @@ serverRouter.patch('/updateserver',authenticateToken, async (req: ExtendedReques
     }
 
 });
+
+serverRouter.patch('/leaveserver',authenticateToken, async (req: ExtendedRequest, res: Response):Promise<any> => {
+  const { serverid } = req.query;
+    const user = req.user;
+
+    if (!serverid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required server details to leave',
+      });
+    }
+
+    if(!user.id){
+      return res.status(400).json({
+        success: false,
+        message: 'Required user id to leave',
+      });
+    }
+
+    try {
+      const server = await db.server.update({
+        where: {
+          id: serverid as string,
+          profileId : {
+            not: user.id
+          },
+          members:{
+            some:{
+              profileId : user.id
+            }
+          }
+        },
+        data: {
+          members: {
+            deleteMany:{
+              profileId : user.id
+            }
+          }
+        },
+      });
+
+      
+      const updatedServer = await db.server.findUnique({
+          where: {
+            id: server.id, // Use the ID from the created server
+          },
+          include: {
+            channels: {
+              orderBy: {
+                createdAt: "asc"
+              }
+            },
+            members: {
+              include: {
+                profile: true // Include profile details
+              },
+              orderBy: {
+                role: "asc"
+              }
+            }
+          }
+        });
+
+      res.json({
+        success: true,
+        server: updatedServer,
+      });
+    } catch (error) {
+      console.error('Error leaving server:', error);
+      res.status(500).json({
+        success: false,
+        message: 'An error occurred while leaving the server',
+      });
+    }
+
+});
+
+serverRouter.delete('/deleteserver',authenticateToken, async (req: ExtendedRequest, res: Response):Promise<any> => {
+  const { serverid } = req.query;
+    const user = req.user;
+
+    if (!serverid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required server details to leave',
+      });
+    }
+
+    if(!user.id){
+      return res.status(400).json({
+        success: false,
+        message: 'Required user id to leave',
+      });
+    }
+
+    try {
+      const server = await db.server.delete({
+        where: {
+          id: serverid as string,
+          profileId : user.id
+        }
+      });
+
+
+      res.json({
+        success: true,
+        message: "Server Deleted Successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting server:', error);
+      res.status(500).json({
+        success: false,
+        message: 'An error occurred while deleting the server',
+      });
+    }
+
+});

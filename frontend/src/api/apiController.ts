@@ -1,4 +1,4 @@
-import { MemberRole } from "@/lib/utils";
+import { ChannelType, MemberRole } from "@/lib/utils";
 import axiosInstance from "./axiosConfig";
 
 export const login = async (userData: object) => {
@@ -105,6 +105,33 @@ export const updateMemberRole = async (memberid:string, role : MemberRole, serve
 export const deleteMember = async (memberid:string, serverid : string) => {
   try {
     const response = await axiosInstance.delete(`/api/member/deletemember?memberid=${memberid}&serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createChannel = async (channelname:string,channeltype :ChannelType, serverid : string) => {
+  try {
+    const response = await axiosInstance.post(`/api/channel/createchannel?channelname=${channelname}&channeltype=${channeltype}&serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const leaveServer = async (serverid : string) => {
+  try {
+    const response = await axiosInstance.patch(`/api/server/leaveserver?serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteServer = async (serverid : string) => {
+  try {
+    const response = await axiosInstance.delete(`/api/server/deleteserver?serverid=${serverid}`);
     return response.data;
   } catch (error) {
     throw error;

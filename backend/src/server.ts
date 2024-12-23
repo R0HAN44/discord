@@ -5,6 +5,7 @@ import { authRouter } from './routes/authRoute';
 import { serverRouter } from './routes/serverRoute';
 import { userRouter } from './routes/userRoute';
 import { memberRouter } from './routes/memberRoute';
+import { channelRouter } from './routes/channelRoute';
 
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(
 const router = Router()
 app.use("/api/auth",authRouter);
 app.use("/api/server",serverRouter);
+app.use("/api/channel",channelRouter);
 app.use("/api/member",memberRouter);
 app.use("/api/user",userRouter);
 

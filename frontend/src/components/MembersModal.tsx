@@ -32,7 +32,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteMember, updateMemberRole } from "@/api/apiController";
-import { useNavigate } from "react-router-dom";
 
 const roleIconMap = {
   GUEST: null,
