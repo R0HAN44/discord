@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { db } from '../lib/db';
 import authenticateToken from '../middlewares/authenticateToken';
 import { ChannelType, MemberRole } from '@prisma/client';
+import { channel } from 'diagnostics_channel';
 
 export const channelRouter = Router();
 
@@ -268,6 +269,101 @@ channelRouter.delete('/deletechannel', authenticateToken, async (req: ExtendedRe
     return res.status(500).json({
       success: false,
       message: 'An error occurred while deleting the channel',
+    });
+  }
+});
+
+channelRouter.get('/generalchannels', authenticateToken, async (req: ExtendedRequest, res: Response): Promise<any> => {
+  try {
+    const { serverid } = req.query;
+    const userid = req.user.id;
+
+    // Validate inputs
+    if (!userid) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required',
+      });
+    }
+
+    if (!serverid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Server ID is required',
+      });
+    }
+
+    // Fetch the server details
+    const server = await db.server.findUnique({
+      where: {
+        id: serverid as string,
+        members: {
+          some: {
+            profileId: userid,
+          },
+        }
+      },
+      include: {
+        channels: {
+          where: {
+            name: "general"
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+      },
+    });
+
+    return res.json({
+      success: true,
+      server,
+    });
+  } catch (error) {
+    console.error('Error fetching channels:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while fetching the channels',
+    });
+  }
+})
+
+channelRouter.get('/getchannel', authenticateToken, async (req: ExtendedRequest, res: Response): Promise<any> => {
+  try {
+    const { channelid } = req.query;
+    const userid = req.user.id;
+
+    // Validate inputs
+    if (!userid) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required',
+      });
+    }
+
+    if (!channelid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Channel ID is required',
+      });
+    }
+
+    // Fetch the channel details
+    const channel = await db.channel.findUnique({
+      where: {
+        id: channelid as string,
+      },
+    });
+
+    return res.json({
+      success: true,
+      channel,
+    });
+  } catch (error) {
+    console.error('Error fetching channel:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while fetching the channel',
     });
   }
 });

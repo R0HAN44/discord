@@ -13,6 +13,8 @@ import CreateServerPage from "./pages/CreateServerPage";
 import ServerPage from "./pages/main/ServerPage";
 import MainLayout from "./pages/main/MainLayout";
 import InviteCode from "./pages/InviteCode";
+import ChannelIdPage from "./pages/main/ChannelIdPage";
+import { MemberIdPage } from "./pages/main/MemberIdPage";
 
 function App() {
   return (
@@ -42,6 +44,23 @@ function App() {
               element={
                 <MainLayout>
                   <ServerPage />
+                </MainLayout>
+              }
+            />
+
+            <Route
+              path="/servers/:serverid/channels/:channelid"
+              element={
+                <MainLayout>
+                  <ChannelIdPage />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/servers/:serverid/conversations/:memberid"
+              element={
+                <MainLayout>
+                  <MemberIdPage />
                 </MainLayout>
               }
             />

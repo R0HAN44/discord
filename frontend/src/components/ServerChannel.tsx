@@ -20,7 +20,6 @@ const iconMap = {
 };
 
 const ServerChannel = ({ channel, server, role }: ServerChannelProps) => {
-  console.log(channel);
   const { onOpen, setChannel } = useModal();
   const params = useParams();
   const navigate = useNavigate();

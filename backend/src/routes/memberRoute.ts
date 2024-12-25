@@ -148,3 +148,42 @@ memberRouter.delete('/deletemember', authenticateToken, async (req: ExtendedRequ
     });
   }
 });
+
+memberRouter.get('/getmember', authenticateToken, async (req: ExtendedRequest, res: Response): Promise<any> => {
+  try {
+    const { serverid } = req.query;
+    const userid = req.user.id;
+
+    if (!userid) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required'
+      });
+    }
+
+    if (!serverid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Server ID is required'
+      });
+    }
+
+    const member = await db.member.findFirst({
+      where: {
+        serverId: serverid as string,
+        profileId: userid
+      }
+    });
+
+    return res.json({
+      success: true,
+      member
+    });
+  } catch (error) {
+    console.error('Error fetching members', error);
+    return res.status(500).json({
+      success: false,
+      message: 'An error occurred while fetching members'
+    });
+  }
+});

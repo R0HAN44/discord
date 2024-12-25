@@ -155,3 +155,30 @@ export const editChannel = async (channelid:string,channelname:string,channeltyp
     throw error;
   }
 };
+
+export const fetchGeneralChannels = async (serverid : string) => {
+  try {
+    const response = await axiosInstance.get(`/api/channel/generalchannels?serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const fetchChannel = async (channelid : string) => { 
+  try {
+    const response = await axiosInstance.get(`/api/channel/getchannel?channelid=${channelid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const fetchMember = async (serverid : string) => {
+  try {
+    const response = await axiosInstance.get(`/api/member/getmember?serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

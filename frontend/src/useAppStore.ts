@@ -55,15 +55,13 @@ interface AppState {
     channels: any[];
     members: any[];
   };
-  activeChannel: {
-    id: string;
-    name: string;
-    type: "TEXT" | "AUDIO" | "VIDEO";
-  } | null;
+  activeChannel: any;
+  activeMember: any,
   setUser: (user: { id: string; name: string; email: string; imageUrl?: string } | null) => void;
   setServers: (servers: { id: string; name: string; imageUrl?: string; inviteCode: string,createdAt?: Date; updatedAt?: Date,profileId:string,channels: any[],members: any[], }[]) => void;
+  setActiveMember: (member: any) => void;
   setActiveServer: (server: { id: string; name: string; imageUrl?: string; inviteCode: string;createdAt?: Date; updatedAt?: Date,profileId:string,channels: any[],members: any[],}) => void;
-  setActiveChannel: (channel: { id: string; name: string; type: "TEXT" | "AUDIO" | "VIDEO" } | null) => void;
+  setActiveChannel: (channel: any) => void;
 }
 
 // Zustand store
@@ -73,8 +71,10 @@ const useAppStore = create<AppState>()(
     servers: [],
     activeServer: null,
     activeChannel: null,
+    activeMember: null,
     setUser: (user) => set({ user }),
     setServers: (servers) => set({ servers }),
+    setActiveMember: (member) => set({ activeMember: member }),
     setActiveServer: (server) => set({ activeServer: server }),
     setActiveChannel: (channel) => set({ activeChannel: channel }),
   }))

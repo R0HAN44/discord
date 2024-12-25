@@ -20,7 +20,6 @@ const NavigationItem = ({ id, imageUrl, name }: NavigationItemProps) => {
       console.error("Server not found");
       return;
     }
-    console.log(activeserver);
     setActiveServer(activeserver);
     navigate(`/servers/${id}`);
   };
