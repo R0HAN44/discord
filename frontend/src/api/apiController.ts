@@ -182,3 +182,21 @@ export const fetchMember = async (serverid : string) => {
     throw error;
   }
 }
+
+export const findConversationByMembers = async (memberOneId: string, memberTwoId: string) => {
+  try {
+    const response = await axiosInstance.get(`/api/conversation/getconversation?memberoneid=${memberOneId}&membertwoid=${memberTwoId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const createConversation = async (memberOneId: string, memberTwoId: string) => {
+  try {
+    const response = await axiosInstance.post(`/api/conversation/createconversation?memberoneid=${memberOneId}&membertwoid=${memberTwoId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

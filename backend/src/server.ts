@@ -6,6 +6,7 @@ import { serverRouter } from './routes/serverRoute';
 import { userRouter } from './routes/userRoute';
 import { memberRouter } from './routes/memberRoute';
 import { channelRouter } from './routes/channelRoute';
+import { conversationRouter } from './routes/conversationRoute';
 
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use("/api/auth",authRouter);
 app.use("/api/server",serverRouter);
 app.use("/api/channel",channelRouter);
 app.use("/api/member",memberRouter);
+app.use("/api/conversation",conversationRouter);
 app.use("/api/user",userRouter);
 
 router.get("/",(req:Request,res:Response) => {

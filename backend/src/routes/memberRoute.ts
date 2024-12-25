@@ -172,6 +172,9 @@ memberRouter.get('/getmember', authenticateToken, async (req: ExtendedRequest, r
       where: {
         serverId: serverid as string,
         profileId: userid
+      },
+      include:{
+        profile: true
       }
     });
 

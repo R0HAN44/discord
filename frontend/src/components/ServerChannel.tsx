@@ -3,7 +3,7 @@ import { Channel, ChannelType, MemberRole, Server } from "../lib/utils";
 import { Edit, Hash, Lock, Mic, Trash, Video } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { ModalType, useModal } from "@/useAppStore";
+import useAppStore, { ModalType, useModal } from "@/useAppStore";
 import { useNavigate, useParams } from "react-router-dom";
 import ActionTooltip from "./ActionTooltip";
 
@@ -21,17 +21,21 @@ const iconMap = {
 
 const ServerChannel = ({ channel, server, role }: ServerChannelProps) => {
   const { onOpen, setChannel } = useModal();
+  const { setActiveChannel } = useAppStore();
   const params = useParams();
   const navigate = useNavigate();
   const Icon = iconMap[channel.type];
 
-  const onClick = () =>
+  const onClick = () => {
+    // setActiveChannel
     navigate(`/servers/${params?.serverid}/channels/${channel.id}`);
+  };
 
   const onAction = (e: React.MouseEvent, action: ModalType) => {
     e.stopPropagation();
 
     onOpen(action, false, server);
+    setActiveChannel(channel);
     setChannel(channel);
   };
   return (

@@ -14,7 +14,7 @@ import ServerPage from "./pages/main/ServerPage";
 import MainLayout from "./pages/main/MainLayout";
 import InviteCode from "./pages/InviteCode";
 import ChannelIdPage from "./pages/main/ChannelIdPage";
-import { MemberIdPage } from "./pages/main/MemberIdPage";
+import MemberIdPage from "./pages/main/MemberIdPage";
 
 function App() {
   return (

@@ -5,19 +5,14 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ChannelIdPage = () => {
-  const {
-    activeServer,
-    setActiveChannel,
-    setActiveMember,
-    activeChannel,
-    activeMember,
-  } = useAppStore();
+  const { activeServer, setActiveChannel, setActiveMember, activeChannel } =
+    useAppStore();
   const params = useParams();
   const channelId = params.channelid;
   const navigate = useNavigate();
   useEffect(() => {
     getChannelAndMember();
-  }, []);
+  }, [channelId]);
 
   async function getChannelAndMember() {
     const channelResponse = await fetchChannel(channelId || "");
