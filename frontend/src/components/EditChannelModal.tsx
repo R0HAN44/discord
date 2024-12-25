@@ -1,4 +1,4 @@
-import { createChannel, createServer } from "@/api/apiController";
+import { createChannel, createServer, editChannel } from "@/api/apiController";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,7 +28,7 @@ export enum ChannelType {
   VIDEO = "VIDEO",
 }
 
-export default function CreateChannelModal() {
+export default function EditChannelModal() {
   const [error, setError] = useState(false);
   const [channelNameError, setChannelNameError] = useState(false);
   const [channelTypeError, setChannelTypeError] = useState(false);
@@ -37,10 +37,10 @@ export default function CreateChannelModal() {
   const { user } = useAppStore();
   const navigate = useNavigate();
   const { setActiveServer, activeServer, servers, setServers } = useAppStore();
-  const { isOpen, onClose, type, data, channelType } = useModal();
+  const { isOpen, onClose, type, data, channelType, channel } = useModal();
   const server = activeServer || data;
 
-  const isModalOpen = isOpen && type === "createChannel";
+  const isModalOpen = isOpen && type === "editChannel";
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,8 +65,12 @@ export default function CreateChannelModal() {
 
     if (hasError) return;
 
-    console.log(channelName, channelType, server.id);
-    const response = await createChannel(channelName, channeltype, server.id);
+    const response = await editChannel(
+      channel.id,
+      channelName,
+      channeltype,
+      server.id
+    );
     setActiveServer(response.server);
     const updatedServers = servers.map((server) =>
       server.id === response.server.id
@@ -88,18 +92,17 @@ export default function CreateChannelModal() {
   };
 
   useEffect(() => {
-    if (channelType) {
-      setChanneltype(channelType);
-    } else {
-      setChanneltype(ChannelType.TEXT);
+    if (channel) {
+      setChannelName(channel.name);
+      setChanneltype(channel.type);
     }
-  }, [channelType, channeltype]);
+  }, [channel]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px] z-[9000]">
         <DialogHeader>
-          <DialogTitle>Create Channel</DialogTitle>
+          <DialogTitle>Edit Channel</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -167,7 +170,7 @@ export default function CreateChannelModal() {
           )}
           <DialogFooter>
             <Button disabled={error || channelTypeError} type="submit">
-              Create
+              Save
             </Button>
           </DialogFooter>
         </form>

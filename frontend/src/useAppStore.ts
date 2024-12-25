@@ -1,12 +1,23 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { Channel, ChannelType } from "./lib/utils";
 
-export type ModalType = "createServer" | "invite" | "editserver" | "members" | "createChannel" | "leaveServer" | "deleteServer";
+export type ModalType = "createServer" | "invite" | "editserver" | "members" | "createChannel" 
+  | "leaveServer"
+  | "deleteServer"
+  | "deleteChannel"
+  | "editChannel"
+  | "messageFile"
+  | "deleteMessage";
 
 interface ModalStore {
   type : ModalType | null;
   isOpen: boolean;
   data: any;
+  channel: any;
+  channelType: ChannelType;
+  setChannel: (channel : Channel) => void;
+  setChannelType: (channelType : ChannelType) => void;
   onOpen: (type:ModalType, dialogTriggerButton:boolean, data?: any) => void;
   onClose: ()=>void;
   dialogTriggerButton: boolean;
@@ -73,6 +84,10 @@ export const useModal = create<ModalStore>((set)=>({
   type:null,
   isOpen : false,
   data : {},
+  channel: {},
+  channelType: ChannelType.TEXT,
+  setChannel: (channel : Channel) => set({channel}),
+  setChannelType: (channelType : ChannelType) => set({channelType}),
   onOpen : (type, dialogTriggerButton, data = {}) => set({isOpen:true,dialogTriggerButton,type, data}),
   onClose: () => set({type:null, isOpen:false}),
   dialogTriggerButton : false,

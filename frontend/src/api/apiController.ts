@@ -137,3 +137,21 @@ export const deleteServer = async (serverid : string) => {
     throw error;
   }
 };
+
+export const deleteChannel = async (channelid : string, serverid : string) => {
+  try {
+    const response = await axiosInstance.delete(`/api/channel/deletechannel?channelid=${channelid}&serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const editChannel = async (channelid:string,channelname:string,channeltype :ChannelType, serverid : string) => {
+  try {
+    const response = await axiosInstance.patch(`/api/channel/editchannel?channelid=${channelid}&channelname=${channelname}&channeltype=${channeltype}&serverid=${serverid}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
