@@ -2,6 +2,8 @@ import { Hash } from "lucide-react";
 import MemberAvatar from "./MemberAvatar";
 import { MobileToggle } from "./MobileToggle";
 import useAppStore from "@/useAppStore";
+import SocketIndicator from "./SocketIndicator";
+import { ChatVideoButton } from "./ChatVideoButton";
 
 interface ChatHeaderProps {
   serverId: string;
@@ -26,10 +28,10 @@ export function ChatHeader({
         <MemberAvatar src={imageUrl} className="h-8 w-8 md:h-8 md:w-8 mr-2" />
       )}
       <p className="font-semibold text-md text-black dark:text-white">{name}</p>
-      {/* <div className="ml-auto flex items-center">
+      <div className="ml-auto flex items-center">
         {type === "conversation" && <ChatVideoButton />}
-        <SocketIndicatior />
-      </div> */}
+        <SocketIndicator />
+      </div>
     </div>
   );
 }

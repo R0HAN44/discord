@@ -1,14 +1,23 @@
 import { fetchChannel, fetchMember } from "@/api/apiController";
 import { ChatHeader } from "@/components/ChatHeader";
+import { ChatInput } from "@/components/ChatInput";
+import { ChatMessages } from "@/components/ChatMessages";
+import { MediaRoom } from "@/components/MediaRoom";
+import { ChannelType } from "@/lib/utils";
 import useAppStore from "@/useAppStore";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ChannelIdPage = () => {
-  const { activeServer, setActiveChannel, setActiveMember, activeChannel } =
-    useAppStore();
+  const {
+    activeMember,
+    activeServer,
+    setActiveChannel,
+    setActiveMember,
+    activeChannel,
+  } = useAppStore();
   const params = useParams();
-  const channelId = params.channelid;
+  const channelId = params?.channelid;
   const navigate = useNavigate();
   useEffect(() => {
     getChannelAndMember();
@@ -30,6 +39,37 @@ const ChannelIdPage = () => {
         serverId={activeChannel?.serverId}
         type="channel"
       />
+      {activeChannel?.type === ChannelType.TEXT && (
+        <>
+          <ChatMessages
+            member={activeMember}
+            name={activeChannel?.name || ""}
+            chatId={channelId || ""}
+            type="channel"
+            apiUrl="/api/message/messages"
+            socketUrl="/api/message/messages"
+            socketQuery={{
+              channelid: channelId || "",
+              serverid: activeServer?.id || "",
+            }}
+            paramKey="channelId"
+            paramValue={channelId || ""}
+          />
+          <ChatInput
+            name={activeChannel?.name || ""}
+            type="channel"
+            apiUrl="/api/message/messages"
+            query={{ channelid: channelId, serverid: activeServer?.id }}
+            isConv={false}
+          />
+        </>
+      )}
+      {activeChannel?.type === ChannelType.AUDIO && (
+        <MediaRoom chatId={activeChannel.id} video={false} audio={true} />
+      )}
+      {activeChannel?.type === ChannelType.VIDEO && (
+        <MediaRoom chatId={activeChannel.id} video={true} audio={true} />
+      )}
     </div>
   );
 };

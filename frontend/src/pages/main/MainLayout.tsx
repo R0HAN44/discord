@@ -11,6 +11,7 @@ import LeaveServerModal from "@/components/LeaveServerModal";
 import DeleteServerModal from "@/components/DeleteServerModal";
 import DeleteChannelModal from "@/components/DeleteChannelModal";
 import EditChannelModal from "@/components/EditChannelModal";
+import { DeleteMessageModal } from "@/components/DeleteMessageModal";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { setDialogTriggerButton, onClose } = useModal();
@@ -21,6 +22,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
+      <DeleteMessageModal />
       <CreateServerModal />
       <InviteModal />
       <EditServerModal />
@@ -34,7 +36,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="hidden md:flex h-full w-[72px] z-30 flex-col fixed inset-y-0">
           <NavigationSideBar />
         </div>
-        <main className="md:pl-[72px]" h-full>
+        <main className="md:pl-[72px] h-[100vh]">
           <ServerLayout>{children}</ServerLayout>
         </main>
       </div>

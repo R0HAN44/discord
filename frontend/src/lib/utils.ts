@@ -86,3 +86,14 @@ export interface Channel {
   createdAt :Date;
   updatedAt :Date;
 }
+
+export interface Message {
+  id: string;
+  content: string;
+  profileId: string;
+  profile: Profile;
+  channelId: string;
+  channel: Channel;
+  createdAt: Date;
+  updatedAt: Date;
+}

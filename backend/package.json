@@ -18,7 +18,9 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
+    "livekit-server-sdk": "^2.9.7",
     "prisma": "^6.1.0",
+    "socket.io": "^4.8.1",
     "uuid": "^11.0.3"
   },
   "devDependencies": {

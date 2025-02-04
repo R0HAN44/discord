@@ -200,3 +200,56 @@ export const createConversation = async (memberOneId: string, memberTwoId: strin
     throw error;
   }
 }
+
+export const sendMessage = async (apiUrl: string, channelid: string, serverid : string, value: string) => {
+  try {
+    const response = await axiosInstance.post(`${apiUrl}?channelid=${channelid}&serverid=${serverid}&content=${value}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+export const sendConvMessage = async (apiUrl: string, conversationId : string, value: string) => {
+  try {
+    const response = await axiosInstance.post(`${apiUrl}?conversationId=${conversationId}&content=${value}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getMessages = async (url: string) => {
+  try {
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const patchMessage = async (url: string, value : string) => {
+  try {
+    const response = await axiosInstance.patch(`${url}&content=${value}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const deleteMessage = async (url: string) => {
+  try {
+    const response = await axiosInstance.delete(`${url}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getLiveKitToken = async (room: string, username: string) => {
+  try {
+    const response = await axiosInstance.get(`/api/livekit/getToken?room=${room}&username=${username}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
